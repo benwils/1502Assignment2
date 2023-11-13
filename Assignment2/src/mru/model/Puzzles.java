@@ -4,8 +4,8 @@ public class Puzzles extends Toy{
 	
 	private char puzzleType;
 	
-	public Puzzles(String SN, String name, String brand, double price, int availableCount, int ageAppropriate, char puzzleType) {
-		super(SN, name, brand, price, availableCount, ageAppropriate);
+	public Puzzles(String serialNumber, String name, String brand, double price, int availableCount, int ageAppropriate, char puzzleType) {
+		super(serialNumber, name, brand, price, availableCount, ageAppropriate);
 		this.puzzleType = puzzleType;
 	}
 	
@@ -33,9 +33,5 @@ public class Puzzles extends Toy{
 		else {
 			return super.toString() + " Puzzle Type: Riddle";
 		}
-	}
-	
-	public String formatForSave() {
-		return super.formatForSave() + ";" + puzzleType;
 	}
 }

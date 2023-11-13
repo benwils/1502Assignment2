@@ -39,8 +39,4 @@ public class Animals extends Toy {
 		}
 		
 	}
-	
-	public String formatForSave() {
-		return super.formatForSave() + ";" + material + ";" + size;
-	}
 }

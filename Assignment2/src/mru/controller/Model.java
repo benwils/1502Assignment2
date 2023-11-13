@@ -50,23 +50,23 @@ public class Model {
 				splittedLine = currentLine.split(";");
 				if (splittedLine[0].charAt(0) == '1' || splittedLine[0].charAt(0) == '0') {
 					//figures SN, name, brand, price, count, age, mat
-					Toy toy = new Figures(splittedLine[0], splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
+					Toy toy = new Figures(String.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
 					toys.add(toy);
 				}
 				else if (splittedLine[0].charAt(0) == '2' || splittedLine[0].charAt(0) == '3') {
 					//Animals mat size
-					Toy toy = new Animals(splittedLine[0], splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6], splittedLine[7].charAt(0));
+					Toy toy = new Animals(String.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6], splittedLine[7].charAt(0));
 					toys.add(toy);
 				}
 				else if (splittedLine[0].charAt(0) == '4' || splittedLine[0].charAt(0) == '5' || splittedLine[0].charAt(0) == '6') {
 					//puzzles type
-					Toy toy = new Puzzles(splittedLine[0], splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
+					Toy toy = new Puzzles(String.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
 					toys.add(toy);
 				}
 				else {
 					//Board games min, max, designers
 					splitPlayers = splittedLine[6].split("-");
-					Toy toy = new BoardGames(splittedLine[0], splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), Integer.parseInt(splitPlayers[0]), Integer.parseInt(splitPlayers[1]), splittedLine[7]);
+					Toy toy = new BoardGames(String.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), Integer.parseInt(splitPlayers[0]), Integer.parseInt(splitPlayers[1]), splittedLine[7]);
 					toys.add(toy);
 				}
 			}
@@ -93,7 +93,7 @@ public class Model {
                         removeToy(toys);
                         break;
                     case 4:
-                        save(toys, "res\\toys.txt");
+                        save(toys, "toys.txt");
                         flag = false; // Exit the loop when the user chooses to save and exit
                         break;
                     default:
@@ -104,10 +104,10 @@ public class Model {
     }
 
 
-    private void save(ArrayList<Toy> toys, String fileName) {
+    public void save(ArrayList<Toy> toys, String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             for (Toy toy : toys) {
-                writer.write(toy.formatForSave());
+                writer.write(toy.toString());
                 writer.newLine();
             }
             System.out.println("Toys have been successfully saved to " + fileName);
@@ -124,8 +124,9 @@ public class Model {
         String SN;
         while (true) {
             System.out.print("\nEnter Serial Number (10 digits): ");
-            SN = scanner.next();
-            if (SN.matches("\\d{10}")) {
+            String inputSN = scanner.next();
+            if (inputSN.matches("\\d{10}")) {
+                SN = inputSN;
 
                 // Check if SN is unique
                 if (isSerialNumberUnique(SN)) {
@@ -161,13 +162,14 @@ public class Model {
         System.out.print("\nEnter Appropriate Age: ");
         int age = scanner.nextInt();
 
-        if (SN.startsWith("0") || SN.startsWith("1")) {
+        String type = (SN);
+        if (type.startsWith("0") || type.startsWith("1")) {
         	System.out.println("\nEnter Toy Classification: ");
             char classification = scanner.next().charAt(0);
             Toy toy = new Figures(SN, name, brand, price, count, age, classification);
             toys.add(toy);
         }
-        else if (SN.startsWith("2") || SN.startsWith("3")) {
+        else if (type.startsWith("2") || type.startsWith("3")) {
         	System.out.println("\nEnter Toy Material: ");
             String material = scanner.next();
             System.out.println("\nEnter Toy Size: ");
@@ -175,7 +177,7 @@ public class Model {
             Toy toy = new Animals(SN, name, brand, price, count, age, material, size);
             toys.add(toy);
         }
-        else if (SN.startsWith("4") || SN.startsWith("5") || SN.startsWith("6")) {
+        else if (type.startsWith("4") || type.startsWith("5") || type.startsWith("6")) {
         	System.out.println("\nEnter Puzzle Type: ");
             char puzzleType = scanner.next().charAt(0);
             Toy toy = new Puzzles(SN, name, brand, price, count, age, puzzleType);
@@ -201,9 +203,9 @@ public class Model {
     }
     
  // Helper method to check if Serial Number is unique in the toys ArrayList
-    private boolean isSerialNumberUnique(String newSN) {
+    public boolean isSerialNumberUnique(String sN) {
         for (Toy existingToy : toys) {
-            if (existingToy.getSN() == newSN) {
+            if (existingToy.getSN() == sN) {
                 return false; // Serial Number already exists, not unique
             }
         }
@@ -541,71 +543,60 @@ public void toyNameSearch(ArrayList<Toy> toys2) {
 
     
 
-    public void serialNumSearch(ArrayList<Toy> toys2) {
-        Scanner scanner = new Scanner(System.in);
+public void serialNumSearch(ArrayList<Toy> toys2) {
+    Scanner scanner = new Scanner(System.in);
 
-        // Validate user input for Serial Number (SN)
-        String keyword;
+    // Validate user input for Serial Number (SN)
+    String keyword;
+    while (true) {
+        System.out.println("Enter Serial Number (SN) to search: ");
+        keyword = scanner.nextLine();
+        // No need to try parsing, as we are now treating the serial number as a string
+        break; // If we reach here, the input is a valid string
+    }
+
+    ArrayList<String> searchResults = new ArrayList<>();
+
+    // Search for items containing the keyword
+    for (Toy item : toys2) {
+        if (item.getSN().equals(keyword)) {
+            searchResults.add(item.toString());
+        }
+    }
+
+    // Display search results
+    if (searchResults.isEmpty()) {
+        System.out.println("No matching items found.\n");
+    } else {
+        System.out.println("Matching items:\n");
+        for (int i = 0; i < searchResults.size(); i++) {
+            System.out.println((i + 1) + ". " + toys2.get(i).getSN() + ": " + searchResults.get(i));
+        }
+
+        // Allow the user to select and remove an item
+        System.out.println("Enter the number of the item you would like to purchase (or 0 to go back to the menu): ");
+        int choice;
         while (true) {
-            System.out.println("Enter Serial Number (SN) to search: ");
             try {
-                keyword = scanner.nextLine();
-                Long.parseLong(keyword); // Try parsing the input as a long
+                choice = Integer.parseInt(scanner.nextLine());
                 break; // If successful, exit the loop
             } catch (NumberFormatException e) {
-                System.out.println("Error: Please enter a valid SN containing numbers only.");
+                System.out.println("Error: Please enter a valid number.");
             }
         }
 
-
-        ArrayList<String> searchResults = new ArrayList<>();
-
-        // Search for items containing the keyword
-        for (Toy item : toys2) {
-            if (item.getSN() == Long.parseLong(keyword)) {
-                searchResults.add(item.toString());
-            }
-        }
-
-        // Display search results
-        if (searchResults.isEmpty()) {
-            System.out.println("No matching items found.\n");
+        if (choice >= 1 && choice <= searchResults.size()) {
+            String serialNumberToRemove = toys2.get(choice - 1).getSN();
+            removeToyBySerialNumber(toys2, serialNumberToRemove);
+            System.out.println(serialNumberToRemove + " has been purchased.\n");
         } else {
-            System.out.println("Matching items:\n");
-            for (long i = 0; i < searchResults.size(); i++) {
-                System.out.println((i + 1) + ". " + toys2.get((int) i).getSN() + ": " + searchResults.get((int) i));
-            }
-
-
-            }
-
-            // Allow user to select and remove an item
-            System.out.println("Enter the number of the item you would like to purchase (or 0 to go back to menu): ");
-            int choice;
-            while (true) {
-                try {
-                    choice = Integer.parseInt(scanner.nextLine());
-                    break; // If successful, exit the loop
-                } catch (NumberFormatException e) {
-                    System.out.println("Error: Please enter a valid number.");
-                }
-            }
-
-            if (choice >= 1 && choice <= searchResults.size()) {
-            	long serialNumberToRemove = Long.parseLong(searchResults.get(choice - 1));
-            	removeToyBySerialNumber(toys2, serialNumberToRemove);
-
-
-
-            	System.out.println(serialNumberToRemove + " has been purchased.\n");
-            } else {
-                System.out.println("No item purchased.\n");
-            }
+            System.out.println("No item purchased.\n");
         }
+    }
+}
 
-        // Do not close the scanner here (close it where it's no longer needed)
     
-    private void removeToyBySerialNumber(ArrayList<Toy> toyList, long serialNumberToRemove) {
+    private void removeToyBySerialNumber(ArrayList<Toy> toyList, String serialNumberToRemove) {
         Iterator<Toy> iterator = toyList.iterator();
 
         while (iterator.hasNext()) {
