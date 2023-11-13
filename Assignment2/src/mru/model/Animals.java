@@ -5,7 +5,7 @@ public class Animals extends Toy {
 	private String material;
 	private char size;
 	
-	public Animals(int SN, String name, String brand, double price, int availableCount, int ageAppropriate, String material, char size) {
+	public Animals(long SN, String name, String brand, double price, int availableCount, int ageAppropriate, String material, char size) {
 		super(SN, name, brand, price, availableCount, ageAppropriate);
 		this.material = material;
 		this.size = size;
@@ -27,5 +27,16 @@ public class Animals extends Toy {
 		this.size = size;
 	}
 	
-	
+	public String toString() {
+		if (size == 'S') {
+			return super.toString() + " Material: " + material + " size: Small";
+		}
+		else if (size == 'M') {
+			return super.toString() + " Material: " + material + " size: Medium";
+		}
+		else {
+			return super.toString() + " Material: " + material + " size: Large";
+		}
+		
+	}
 }

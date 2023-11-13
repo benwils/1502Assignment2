@@ -2,14 +2,14 @@ package mru.model;
 
 public abstract class Toy {
 	
-	private int SN;
+	private long SN;
 	private String name;
 	private String brand;
 	private double price;
 	private int availableCount;
 	private int ageAppropriate;
 
-	public Toy(int SN, String name, String brand, double price, int availableCount, int ageAppropriate) {
+	public Toy(long SN, String name, String brand, double price, int availableCount, int ageAppropriate) {
 		this.SN = SN;
 		this.name = name;
 		this.brand = brand;
@@ -18,11 +18,11 @@ public abstract class Toy {
 		this.ageAppropriate = ageAppropriate;
 	}
 	
-	public int getSN() {
+	public long getSN() {
 		return SN;
 	}
 	
-	public void setSN(int SN) {
+	public void setSN(long SN) {
 		this.SN = SN;
 	}
 
@@ -64,6 +64,10 @@ public abstract class Toy {
 
 	public void setAgeAppropriate(int ageAppropriate) {
 		this.ageAppropriate = ageAppropriate;
+	}
+	
+	public String toString() {
+		return "Serial Number: " + SN + " Name: " + name + " Brand: " + brand + " Price: " + price + " Available Count: " + availableCount + " Age Appropriate: " + ageAppropriate + "Min";
 	}
 
 }

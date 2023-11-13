@@ -14,8 +14,8 @@ import mru.view.AppMenu;
 
 public class Model {
     private static ArrayList<String> storeList;
-    private ArrayList<Toy> toys;
-    private final String FILE_PATH = "res/toys.txt";
+    private ArrayList<Toy> toys = new ArrayList<Toy>();
+    private final String FILE_PATH = "src\\toys.txt";
     private AppMenu appMenu;
 
     /**
@@ -46,25 +46,25 @@ public class Model {
 				
 				currentLine = fileReader.nextLine();
 				splittedLine = currentLine.split(";");
-				if (splittedLine[0].charAt(0) == 1 || splittedLine[0].charAt(0) == 0) {
+				if (splittedLine[0].charAt(0) == '1' || splittedLine[0].charAt(0) == '0') {
 					//figures SN, name, brand, price, count, age, mat
-					Toy toy = new Figures(Integer.parseInt(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
+					Toy toy = new Figures(Long.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
 					toys.add(toy);
 				}
-				else if (splittedLine[0].charAt(0) == 2 || splittedLine[0].charAt(0) == 3) {
+				else if (splittedLine[0].charAt(0) == '2' || splittedLine[0].charAt(0) == '3') {
 					//Animals mat size
-					Toy toy = new Animals(Integer.parseInt(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6], splittedLine[7].charAt(0));
+					Toy toy = new Animals(Long.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6], splittedLine[7].charAt(0));
 					toys.add(toy);
 				}
-				else if (splittedLine[0].charAt(0) == 4 || splittedLine[0].charAt(0) == 5 || splittedLine[0].charAt(0) == 6) {
+				else if (splittedLine[0].charAt(0) == '4' || splittedLine[0].charAt(0) == '5' || splittedLine[0].charAt(0) == '6') {
 					//puzzles type
-					Toy toy = new Puzzles(Integer.parseInt(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
+					Toy toy = new Puzzles(Long.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
 					toys.add(toy);
 				}
 				else {
 					//Board games min, max, designers
 					splitPlayers = splittedLine[6].split("-");
-					Toy toy = new BoardGames(Integer.parseInt(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), Integer.parseInt(splitPlayers[0]), Integer.parseInt(splitPlayers[1]), splittedLine[7]);
+					Toy toy = new BoardGames(Long.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), Integer.parseInt(splitPlayers[0]), Integer.parseInt(splitPlayers[1]), splittedLine[7]);
 					toys.add(toy);
 				}
 			}
