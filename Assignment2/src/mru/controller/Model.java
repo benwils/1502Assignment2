@@ -13,9 +13,9 @@ import mru.model.*;
 import mru.view.AppMenu;
 
 public class Model {
-    private static ArrayList<String> storeList;
+	
     private ArrayList<Toy> toys = new ArrayList<Toy>();
-    private final String FILE_PATH = "Assignment2/res/toys.txt";
+    private final String FILE_PATH = "src\\toys.txt";
     private AppMenu appMenu;
 
     /**
@@ -23,12 +23,14 @@ public class Model {
      * @throws Exception 
      */
     public Model() throws Exception {
-        Model.storeList = new ArrayList<>();
         this.appMenu = new AppMenu(this); // Instantiate AppMenu
         initializeStoreList();
         launchApplication();
     }
-
+    
+    
+    
+    
     private void initializeStoreList() throws Exception {
     	File db = new File(FILE_PATH);
 		String currentLine;
@@ -47,7 +49,7 @@ public class Model {
 				currentLine = fileReader.nextLine();
 				splittedLine = currentLine.split(";");
 				if (splittedLine[0].charAt(0) == '1' || splittedLine[0].charAt(0) == '0') {
-					//figures SN, name, brand, price, count, age, class
+					//figures SN, name, brand, price, count, age, mat
 					Toy toy = new Figures(Long.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
 					toys.add(toy);
 				}
@@ -88,10 +90,10 @@ public class Model {
                         addToy();
                         break;
                     case 3:
-                        removeToy(storeList);
+                        removeToy(toys);
                         break;
                     case 4:
-                        save(storeList, "toys.txt");
+                        save(toys, "toys.txt");
                         flag = false; // Exit the loop when the user chooses to save and exit
                         break;
                     default:
@@ -102,10 +104,10 @@ public class Model {
     }
 
 
-    private void save(ArrayList<String> storeList, String fileName) {
-    	try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            for (String toy : storeList) {
-                writer.write(toy);
+    private void save(ArrayList<Toy> toys, String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            for (Toy toy : toys) {
+                writer.write(toy.toString());
                 writer.newLine();
             }
             System.out.println("Toys have been successfully saved to " + fileName);
@@ -113,8 +115,8 @@ public class Model {
             System.err.println("Error saving toys to file: " + e.getMessage());
         }
     }
-    
 
+    
     private void addToy() {
         Scanner scanner = new Scanner(System.in);
         //add validation for Serial number to check if valid and if unique
@@ -209,8 +211,10 @@ public class Model {
         }
         return true; // Serial Number is unique
     }
+    
 
-    private void removeToy(ArrayList<String> itemList) {
+
+    private void removeToy(ArrayList<Toy> toys2) {
         Scanner scanner = new Scanner(System.in);
 
         // Validate user input for Serial Number (SN)
@@ -219,18 +223,18 @@ public class Model {
             System.out.println("Enter Serial Number (SN) to search: ");
             try {
                 keyword = scanner.nextLine();
-                Integer.parseInt(keyword); // Try parsing the input as an integer
+                Long.parseLong(keyword); // Try parsing the input as a long
                 break; // If successful, exit the loop
             } catch (NumberFormatException e) {
                 System.out.println("Error: Please enter a valid SN containing numbers only.");
             }
         }
 
-        ArrayList<String> searchResults = new ArrayList<>();
+        ArrayList<Toy> searchResults = new ArrayList<>();
 
         // Search for items containing the keyword
-        for (String item : itemList) {
-            if (item.toLowerCase().contains(keyword.toLowerCase())) {
+        for (Toy item : toys2) {
+            if (String.valueOf(item.getSN()).toLowerCase().contains(keyword.toLowerCase())) {
                 searchResults.add(item);
             }
         }
@@ -241,22 +245,24 @@ public class Model {
         } else {
             System.out.println("Matching item(s):\n");
             for (int i = 0; i < searchResults.size(); i++) {
-                System.out.println((i + 1) + ". " + searchResults.get(i));
+                System.out.println((i + 1) + ". " + searchResults.get(i).toString());
             }
 
-            // Ask user for confirmation to remove the toy
+            // Ask the user for confirmation to remove the toy
             System.out.println("Do you want to remove the toy? (Y/N)");
             String confirmation = scanner.nextLine().toLowerCase();
 
             if (confirmation.equalsIgnoreCase("Y")) {
                 // Remove the toy using the removeItem() method
-            	 removeItem2(itemList, searchResults);
+                toys2.removeAll(searchResults);
                 System.out.println("Toy removed successfully.");
             } else {
                 System.out.println("Toy removal canceled.");
             }
         }
     }
+
+
 
     private void search() {
         int searchOption;
@@ -273,10 +279,10 @@ public class Model {
 
             switch (searchOption) {
                 case 1:
-                    serialNumSearch(storeList);
+                    serialNumSearch(toys);
                     break;
                 case 2:
-                    toyNameSearch(storeList);
+                    toyNameSearch(toys);
                     break;
                 case 3:
                 	typeSearch();
@@ -295,7 +301,7 @@ public class Model {
         
     
 
-    private static void typeSearch() {
+    private void typeSearch() {
         System.out.println("Select the type of toy you're looking for:\n");
         System.out.println("(1) Figures");
         System.out.println("(2) Animals");
@@ -332,19 +338,20 @@ public class Model {
                 // Add code for handling invalid choices
         }
     }
-    private static void typeBgSearch() {
-        // Display the items starting with 7, 8, or 9
+    private void typeBgSearch() {
+    	// Display the items starting with 4, 5, or 6
         List<String> matchedKeywords = new ArrayList<>();
-        for (String keyword : storeList) {
-            if (keyword.startsWith("7") || keyword.startsWith("8") || keyword.startsWith("9")) {
-                matchedKeywords.add(keyword);
-                System.out.println(matchedKeywords.size() + ". " + keyword);
+        for (Toy toy : toys) {
+            if (String.valueOf(toy.getSN()).startsWith("7") || String.valueOf(toy.getSN()).startsWith("8") || String.valueOf(toy.getSN()).startsWith("9") ) {
+                matchedKeywords.add(toyToString(toy));
+                System.out.println(matchedKeywords.size() + ". " + toyToString(toy));
             }
         }
 
+
         // Ask the user to select an item for purchase
         if (matchedKeywords.isEmpty()) {
-            System.out.println("No items found with keywords starting with 7, 8, or 9.");
+            System.out.println("No items found with keywords starting with 0 or 1.");
         } else {
             Scanner scanner = new Scanner(System.in);
             System.out.print("Enter the number of the item you want to purchase (or 0 to exit): ");
@@ -356,7 +363,7 @@ public class Model {
                 // Add your purchase logic here
 
                 // Remove the purchased item from the list
-                removeItem(storeList, selectedKeyword);
+                removeItem(toys, selectedKeyword);
 
                 System.out.println(selectedKeyword + " has been purchased and removed from the list.");
             } else if (choice == 0) {
@@ -367,85 +374,16 @@ public class Model {
         }
     }
 
-private static void typePuzzleSearch() {
+private void typePuzzleSearch() {
     // Display the items starting with 4, 5, or 6
     List<String> matchedKeywords = new ArrayList<>();
-    for (String keyword : storeList) {
-        if (keyword.startsWith("4") || keyword.startsWith("5") || keyword.startsWith("6")) {
-            matchedKeywords.add(keyword);
-            System.out.println(matchedKeywords.size() + ". " + keyword);
+    for (Toy toy : toys) {
+        if (String.valueOf(toy.getSN()).startsWith("4") || String.valueOf(toy.getSN()).startsWith("5") || String.valueOf(toy.getSN()).startsWith("6") ) {
+            matchedKeywords.add(toyToString(toy));
+            System.out.println(matchedKeywords.size() + ". " + toyToString(toy));
         }
     }
 
-    // Ask the user to select an item for purchase
-    if (matchedKeywords.isEmpty()) {
-        System.out.println("No items found with keywords starting with 4, 5, or 6.");
-    } else {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the number of the item you want to purchase (or 0 to exit): ");
-        int choice = scanner.nextInt();
-
-        if (choice >= 1 && choice <= matchedKeywords.size()) {
-            String selectedKeyword = matchedKeywords.get(choice - 1);
-            System.out.println("You have selected: " + selectedKeyword);
-            // Add your purchase logic here
-
-            // Remove the purchased item from the list
-            removeItem(storeList, selectedKeyword);
-
-            System.out.println(selectedKeyword + " has been purchased and removed from the list.");
-        } else if (choice == 0) {
-            System.out.println("Exiting the purchase process.");
-        } else {
-            System.out.println("Invalid choice. Please try again.");
-        }
-    }
-}
-
-private static void typeAnimalSearch() {
-    // Display the items starting with 2 or 3
-    List<String> matchedKeywords = new ArrayList<>();
-    for (String keyword : storeList) {
-        if (keyword.startsWith("2") || keyword.startsWith("3")) {
-            matchedKeywords.add(keyword);
-            System.out.println(matchedKeywords.size() + ". " + keyword);
-        }
-    }
-
-    // Ask the user to select an item for purchase
-    if (matchedKeywords.isEmpty()) {
-        System.out.println("No items found with keywords starting with 2 or 3.");
-    } else {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the number of the item you want to purchase (or 0 to exit): ");
-        int choice = scanner.nextInt();
-
-        if (choice >= 1 && choice <= matchedKeywords.size()) {
-            String selectedKeyword = matchedKeywords.get(choice - 1);
-            System.out.println("You have selected: " + selectedKeyword);
-            // Add your purchase logic here
-
-            // Remove the purchased item from the list
-            removeItem(storeList, selectedKeyword);
-
-            System.out.println(selectedKeyword + " has been purchased and removed from the list.");
-        } else if (choice == 0) {
-            System.out.println("Exiting the purchase process.");
-        } else {
-            System.out.println("Invalid choice. Please try again.");
-        }
-    }
-}
-
-private static void typeFigureSearch() {
-    // Display the items starting with 0 or 1
-    List<String> matchedKeywords = new ArrayList<>();
-    for (String keyword : storeList) {
-        if (keyword.startsWith("0") || keyword.startsWith("1")) {
-            matchedKeywords.add(keyword);
-            System.out.println(matchedKeywords.size() + ". " + keyword);
-        }
-    }
 
     // Ask the user to select an item for purchase
     if (matchedKeywords.isEmpty()) {
@@ -461,7 +399,78 @@ private static void typeFigureSearch() {
             // Add your purchase logic here
 
             // Remove the purchased item from the list
-            removeItem(storeList, selectedKeyword);
+            removeItem(toys, selectedKeyword);
+
+            System.out.println(selectedKeyword + " has been purchased and removed from the list.");
+        } else if (choice == 0) {
+            System.out.println("Exiting the purchase process.");
+        } else {
+            System.out.println("Invalid choice. Please try again.");
+        }
+    }
+}
+private void typeAnimalSearch() {
+	// Display the items starting with 2 or 4
+    List<String> matchedKeywords = new ArrayList<>();
+    for (Toy toy : toys) {
+        if (String.valueOf(toy.getSN()).startsWith("2") || String.valueOf(toy.getSN()).startsWith("3")) {
+            matchedKeywords.add(toyToString(toy));
+            System.out.println(matchedKeywords.size() + ". " + toyToString(toy));
+        }
+    }
+
+
+    // Ask the user to select an item for purchase
+    if (matchedKeywords.isEmpty()) {
+        System.out.println("No items found with keywords starting with 0 or 1.");
+    } else {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the number of the item you want to purchase (or 0 to exit): ");
+        int choice = scanner.nextInt();
+
+        if (choice >= 1 && choice <= matchedKeywords.size()) {
+            String selectedKeyword = matchedKeywords.get(choice - 1);
+            System.out.println("You have selected: " + selectedKeyword);
+            // Add your purchase logic here
+
+            // Remove the purchased item from the list
+            removeItem(toys, selectedKeyword);
+
+            System.out.println(selectedKeyword + " has been purchased and removed from the list.");
+        } else if (choice == 0) {
+            System.out.println("Exiting the purchase process.");
+        } else {
+            System.out.println("Invalid choice. Please try again.");
+        }
+    }
+}
+
+private void typeFigureSearch() {
+    // Display the items starting with 0 or 1
+    List<String> matchedKeywords = new ArrayList<>();
+    for (Toy toy : toys) {
+        if (String.valueOf(toy.getSN()).startsWith("0") || String.valueOf(toy.getSN()).startsWith("1")) {
+            matchedKeywords.add(toyToString(toy));
+            System.out.println(matchedKeywords.size() + ". " + toyToString(toy));
+        }
+    }
+
+
+    // Ask the user to select an item for purchase
+    if (matchedKeywords.isEmpty()) {
+        System.out.println("No items found with keywords starting with 0 or 1.");
+    } else {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the number of the item you want to purchase (or 0 to exit): ");
+        int choice = scanner.nextInt();
+
+        if (choice >= 1 && choice <= matchedKeywords.size()) {
+            String selectedKeyword = matchedKeywords.get(choice - 1);
+            System.out.println("You have selected: " + selectedKeyword);
+            // Add your purchase logic here
+
+            // Remove the purchased item from the list
+            removeItem(toys, selectedKeyword);
 
             System.out.println(selectedKeyword + " has been purchased and removed from the list.");
         } else if (choice == 0) {
@@ -473,68 +482,68 @@ private static void typeFigureSearch() {
 }
 
 
-	public static void toyNameSearch(ArrayList<String> itemList) {
-        Scanner scanner = new Scanner(System.in);
+public void toyNameSearch(ArrayList<Toy> toys2) {
+    Scanner scanner = new Scanner(System.in);
 
-        // Validate user input for Serial Number (SN)
-        String keyword;
-        while (true) {
-            System.out.println("Enter a Toy Name to search: ");
-            keyword = scanner.nextLine();
+    // Validate user input for Toy Name
+    String keyword;
+    while (true) {
+        System.out.println("Enter a Toy Name to search: ");
+        keyword = scanner.nextLine();
 
-            // Check if the input contains only characters
-            if (keyword.matches("[a-zA-Z]+")) {
-                break; // If successful, exit the loop
-            } else {
-                System.out.println("Error: Please enter characters only no numbers.");
-            }
-        }
-
-        ArrayList<String> searchResults = new ArrayList<>();
-
-        // Search for items containing the keyword
-        for (String item : itemList) {
-            if (item.toLowerCase().contains(keyword.toLowerCase())) {
-                searchResults.add(item);
-            }
-        }
-
-        // Display search results
-        if (searchResults.isEmpty()) {
-            System.out.println("No matching items found.\n");
+        // Check if the input contains only characters
+        if (keyword.matches("[a-zA-Z]+")) {
+            break; // If successful, exit the loop
         } else {
-            System.out.println("Matching items:\n");
-            for (int i = 0; i < searchResults.size(); i++) {
-                System.out.println((i + 1) + ". " + searchResults.get(i));
-            }
+            System.out.println("Error: Please enter characters only, no numbers.");
+        }
+    }
 
-            // Allow the user to select and remove an item
-            System.out.println("Enter the number of the item you would like to purchase (or 0 to go back to menu): ");
-            int choice;
-            while (true) {
-                try {
-                    choice = Integer.parseInt(scanner.nextLine());
-                    break; // If successful, exit the loop
-                } catch (NumberFormatException e) {
-                    System.out.println("Error: Please enter a valid number.");
-                }
-            }
+    ArrayList<Toy> searchResults = new ArrayList<>();
 
-            if (choice >= 1 && choice <= searchResults.size()) {
-                String itemToRemove = searchResults.get(choice - 1);
-                removeItem(itemList, itemToRemove);
-                System.out.println(itemToRemove + " has been purchased.\n");
-            } else {
-                System.out.println("No item purchased.\n");
+    // Search for items containing the keyword
+    for (Toy item : toys2) {
+        if (item.getName().toLowerCase().contains(keyword.toLowerCase())) {
+            searchResults.add(item);
+        }
+    }
+
+    // Display search results
+    if (searchResults.isEmpty()) {
+        System.out.println("No matching items found.\n");
+    } else {
+        System.out.println("Matching items:\n");
+        for (int i = 0; i < searchResults.size(); i++) {
+            System.out.println((i + 1) + ". " + searchResults.get(i).getName());
+        }
+
+        // Allow the user to select and remove an item
+        System.out.println("Enter the number of the item you would like to purchase (or 0 to go back to menu): ");
+        int choice;
+        while (true) {
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+                break; // If successful, exit the loop
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Please enter a valid number.");
             }
         }
 
-        // Do not close the scanner here (close it where it's no longer needed)
+        if (choice >= 1 && choice <= searchResults.size()) {
+            Toy itemToRemove = searchResults.get(choice - 1);
+            removeToyBySerialNumber(toys2, itemToRemove.getSN());
+            System.out.println(itemToRemove.getName() + " has been purchased.\n");
+        } else {
+            System.out.println("No item purchased.\n");
+        }
     }
+
+    // Do not close the scanner here (close it where it's no longer needed)
+}
 
     
 
-    public static void serialNumSearch(ArrayList<String> itemList) {
+    public void serialNumSearch(ArrayList<Toy> toys2) {
         Scanner scanner = new Scanner(System.in);
 
         // Validate user input for Serial Number (SN)
@@ -543,19 +552,20 @@ private static void typeFigureSearch() {
             System.out.println("Enter Serial Number (SN) to search: ");
             try {
                 keyword = scanner.nextLine();
-                Integer.parseInt(keyword); // Try parsing the input as an integer
+                Long.parseLong(keyword); // Try parsing the input as a long
                 break; // If successful, exit the loop
             } catch (NumberFormatException e) {
                 System.out.println("Error: Please enter a valid SN containing numbers only.");
             }
         }
 
+
         ArrayList<String> searchResults = new ArrayList<>();
 
         // Search for items containing the keyword
-        for (String item : itemList) {
-            if (item.toLowerCase().contains(keyword.toLowerCase())) {
-                searchResults.add(item);
+        for (Toy item : toys2) {
+            if (item.getSN() == Long.parseLong(keyword)) {
+                searchResults.add(item.toString());
             }
         }
 
@@ -564,8 +574,11 @@ private static void typeFigureSearch() {
             System.out.println("No matching items found.\n");
         } else {
             System.out.println("Matching items:\n");
-            for (int i = 0; i < searchResults.size(); i++) {
-                System.out.println((i + 1) + ". " + searchResults.get(i));
+            for (long i = 0; i < searchResults.size(); i++) {
+                System.out.println((i + 1) + ". " + toys2.get((int) i).getSN() + ": " + searchResults.get((int) i));
+            }
+
+
             }
 
             // Allow user to select and remove an item
@@ -581,35 +594,56 @@ private static void typeFigureSearch() {
             }
 
             if (choice >= 1 && choice <= searchResults.size()) {
-                String itemToRemove = searchResults.get(choice - 1);
-                removeItem(itemList, itemToRemove);
-                System.out.println(itemToRemove + " has been purchased.\n");
+            	long serialNumberToRemove = Long.parseLong(searchResults.get(choice - 1));
+            	removeToyBySerialNumber(toys2, serialNumberToRemove);
+
+
+
+            	System.out.println(serialNumberToRemove + " has been purchased.\n");
             } else {
                 System.out.println("No item purchased.\n");
             }
         }
 
         // Do not close the scanner here (close it where it's no longer needed)
+    
+    private void removeToyBySerialNumber(ArrayList<Toy> toyList, long serialNumberToRemove) {
+        Iterator<Toy> iterator = toyList.iterator();
+
+        while (iterator.hasNext()) {
+            Toy toy = iterator.next();
+            if (toy.getSN() == serialNumberToRemove) {
+                iterator.remove();
+                break; // Assuming you want to remove only one matching item
+            }
+        }
     }
-
-
+    
+    private String toyToString(Toy toy) {
+        // Convert a Toy object to a String representation
+        // Modify this method based on your Toy class structure
+    	return toy.getSN() + ";" + toy.getName() + ";" /* other properties */;
+    }
 
     public static void removeItem2(ArrayList<String> itemList, ArrayList<String> searchResults) {
         Iterator<String> iterator = itemList.iterator();
         while (iterator.hasNext()) {
             String item = iterator.next();
-            if (item.equals(searchResults)) {
+            if (searchResults.contains(item)) {
                 iterator.remove();
-                break; // Stop after removing the first occurrence
+                // You may choose whether to break after the first occurrence or continue removing all occurrences.
             }
         }
     }
 
+
+
+
     
-    public static void removeItem(ArrayList<String> itemList, String itemToRemove) {
-        Iterator<String> iterator = itemList.iterator();
+    public static void removeItem(ArrayList<Toy> toys2, String itemToRemove) {
+        Iterator<Toy> iterator = toys2.iterator();
         while (iterator.hasNext()) {
-            String item = iterator.next();
+            Toy item = iterator.next();
             if (item.equals(itemToRemove)) {
                 iterator.remove();
                 break; // Stop after removing the first occurrence
@@ -617,6 +651,3 @@ private static void typeFigureSearch() {
         }
     }
 }
-
-
-
