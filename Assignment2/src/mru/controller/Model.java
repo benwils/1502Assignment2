@@ -47,7 +47,7 @@ public class Model {
 				currentLine = fileReader.nextLine();
 				splittedLine = currentLine.split(";");
 				if (splittedLine[0].charAt(0) == '1' || splittedLine[0].charAt(0) == '0') {
-					//figures SN, name, brand, price, count, age, mat
+					//figures SN, name, brand, price, count, age, class
 					Toy toy = new Figures(Long.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
 					toys.add(toy);
 				}
@@ -116,8 +116,98 @@ public class Model {
     
 
     private void addToy() {
-        System.out.println("Adding a toy...");
-        // TODO: Implement add toy logic
+        Scanner scanner = new Scanner(System.in);
+        //add validation for Serial number to check if valid and if unique
+        
+        long SN;
+        while (true) {
+            System.out.print("\nEnter Serial Number (10 digits): ");
+            String inputSN = scanner.next();
+            if (inputSN.matches("\\d{10}")) {
+                SN = Long.parseLong(inputSN);
+
+                // Check if SN is unique
+                if (isSerialNumberUnique(SN)) {
+                    break;
+                } else {
+                    System.out.println("Serial Number is not unique. Please enter a different Serial Number.");
+                }
+            } else {
+                System.out.println("Invalid input. Serial Number must be 10 digits long and contain only digits.");
+            }
+        }
+        
+        System.out.print("\nEnter Toy Name: ");
+        String name = scanner.next();
+        
+        System.out.print("\nEnter Toy Brand: ");
+        String brand = scanner.next();
+        
+        double price;
+        while (true) {
+            System.out.print("\nEnter Toy Price: ");
+            price = scanner.nextDouble();
+            if (price >= 0) {
+                break;
+            } else {
+                System.out.println("Invalid input. Price cannot be negative.");
+            }
+        }
+        
+        System.out.print("\nEnter Available Counts: ");
+        int count = scanner.nextInt();
+        
+        System.out.print("\nEnter Appropriate Age: ");
+        int age = scanner.nextInt();
+
+        String type = Long.toString(SN);
+        if (type.startsWith("0") || type.startsWith("1")) {
+        	System.out.println("\nEnter Toy Classification: ");
+            char classification = scanner.next().charAt(0);
+            Toy toy = new Figures(SN, name, brand, price, count, age, classification);
+            toys.add(toy);
+        }
+        else if (type.startsWith("2") || type.startsWith("3")) {
+        	System.out.println("\nEnter Toy Material: ");
+            String material = scanner.next();
+            System.out.println("\nEnter Toy Size: ");
+            char size = scanner.nextLine().charAt(0);
+            Toy toy = new Animals(SN, name, brand, price, count, age, material, size);
+            toys.add(toy);
+        }
+        else if (type.startsWith("4") || type.startsWith("5") || type.startsWith("6")) {
+        	System.out.println("\nEnter Puzzle Type: ");
+            char puzzleType = scanner.next().charAt(0);
+            Toy toy = new Puzzles(SN, name, brand, price, count, age, puzzleType);
+            toys.add(toy);
+        }
+        else {
+        	int minPlayers, maxPlayers;
+            do {
+                System.out.print("\nEnter Minimum Number of Players: ");
+                minPlayers = scanner.nextInt();
+                System.out.print("\nEnter Maximum Number of Players: ");
+                maxPlayers = scanner.nextInt();
+                if (minPlayers > maxPlayers) {
+                    System.out.println("Invalid input. Minimum number of players cannot be greater than maximum.");
+                }
+            } while (minPlayers > maxPlayers);
+            
+            System.out.println("\nEnter Designer Names(Use ',' to separate the names if there are more than one name): ");
+            String designers = scanner.next();
+            Toy toy = new BoardGames(SN, name, brand, price, count, age, minPlayers, maxPlayers, designers);
+            toys.add(toy);
+        }
+    }
+    
+ // Helper method to check if Serial Number is unique in the toys ArrayList
+    private boolean isSerialNumberUnique(long newSN) {
+        for (Toy existingToy : toys) {
+            if (existingToy.getSN() == newSN) {
+                return false; // Serial Number already exists, not unique
+            }
+        }
+        return true; // Serial Number is unique
     }
 
     private void removeToy(ArrayList<String> itemList) {
