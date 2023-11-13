@@ -28,4 +28,8 @@ public class Figures extends Toy {
 			return super.toString() + " Classification: Historic";
 		}
 	}
+	
+	public String format() {
+		return super.format() + ";" + classification;
+	}
 }

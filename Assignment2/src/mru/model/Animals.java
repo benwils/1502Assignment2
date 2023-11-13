@@ -39,4 +39,8 @@ public class Animals extends Toy {
 		}
 		
 	}
+	
+	public String format() {
+		return super.format() + ";" + material + ";" + size;
+	}
 }

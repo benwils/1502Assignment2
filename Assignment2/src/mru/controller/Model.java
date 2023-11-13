@@ -15,7 +15,7 @@ import mru.view.AppMenu;
 public class Model {
 	
     private ArrayList<Toy> toys = new ArrayList<Toy>();
-    private final String FILE_PATH = "src\\toys.txt";
+    private final String FILE_PATH = "res\\toys.txt";
     private AppMenu appMenu;
 
     /**
@@ -93,7 +93,7 @@ public class Model {
                         removeToy(toys);
                         break;
                     case 4:
-                        save(toys, "toys.txt");
+                        save(toys, "res\\toys.txt");
                         flag = false; // Exit the loop when the user chooses to save and exit
                         break;
                     default:
@@ -107,7 +107,7 @@ public class Model {
     private void save(ArrayList<Toy> toys, String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             for (Toy toy : toys) {
-                writer.write(toy.toString());
+                writer.write(toy.format());
                 writer.newLine();
             }
             System.out.println("Toys have been successfully saved to " + fileName);

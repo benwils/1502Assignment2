@@ -34,4 +34,8 @@ public class Puzzles extends Toy{
 			return super.toString() + " Puzzle Type: Riddle";
 		}
 	}
+	
+	public String format() {
+		return super.format() + ";" + puzzleType;
+	}
 }
