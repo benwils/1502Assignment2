@@ -15,7 +15,7 @@ import mru.view.AppMenu;
 public class Model {
 	
     private ArrayList<Toy> toys = new ArrayList<Toy>();
-    private final String FILE_PATH = "res\\toys.txt";
+    private final String FILE_PATH = "src\\toys.txt";
     private AppMenu appMenu;
 
     /**
@@ -50,23 +50,23 @@ public class Model {
 				splittedLine = currentLine.split(";");
 				if (splittedLine[0].charAt(0) == '1' || splittedLine[0].charAt(0) == '0') {
 					//figures SN, name, brand, price, count, age, mat
-					Toy toy = new Figures(Long.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
+					Toy toy = new Figures(splittedLine[0], splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
 					toys.add(toy);
 				}
 				else if (splittedLine[0].charAt(0) == '2' || splittedLine[0].charAt(0) == '3') {
 					//Animals mat size
-					Toy toy = new Animals(Long.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6], splittedLine[7].charAt(0));
+					Toy toy = new Animals(splittedLine[0], splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6], splittedLine[7].charAt(0));
 					toys.add(toy);
 				}
 				else if (splittedLine[0].charAt(0) == '4' || splittedLine[0].charAt(0) == '5' || splittedLine[0].charAt(0) == '6') {
 					//puzzles type
-					Toy toy = new Puzzles(Long.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
+					Toy toy = new Puzzles(splittedLine[0], splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
 					toys.add(toy);
 				}
 				else {
 					//Board games min, max, designers
 					splitPlayers = splittedLine[6].split("-");
-					Toy toy = new BoardGames(Long.parseLong(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), Integer.parseInt(splitPlayers[0]), Integer.parseInt(splitPlayers[1]), splittedLine[7]);
+					Toy toy = new BoardGames(splittedLine[0], splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), Integer.parseInt(splitPlayers[0]), Integer.parseInt(splitPlayers[1]), splittedLine[7]);
 					toys.add(toy);
 				}
 			}
@@ -107,7 +107,7 @@ public class Model {
     private void save(ArrayList<Toy> toys, String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             for (Toy toy : toys) {
-                writer.write(toy.format());
+                writer.write(toy.formatForSave());
                 writer.newLine();
             }
             System.out.println("Toys have been successfully saved to " + fileName);
@@ -121,12 +121,11 @@ public class Model {
         Scanner scanner = new Scanner(System.in);
         //add validation for Serial number to check if valid and if unique
         
-        long SN;
+        String SN;
         while (true) {
             System.out.print("\nEnter Serial Number (10 digits): ");
-            String inputSN = scanner.next();
-            if (inputSN.matches("\\d{10}")) {
-                SN = Long.parseLong(inputSN);
+            SN = scanner.next();
+            if (SN.matches("\\d{10}")) {
 
                 // Check if SN is unique
                 if (isSerialNumberUnique(SN)) {
@@ -162,14 +161,13 @@ public class Model {
         System.out.print("\nEnter Appropriate Age: ");
         int age = scanner.nextInt();
 
-        String type = Long.toString(SN);
-        if (type.startsWith("0") || type.startsWith("1")) {
+        if (SN.startsWith("0") || SN.startsWith("1")) {
         	System.out.println("\nEnter Toy Classification: ");
             char classification = scanner.next().charAt(0);
             Toy toy = new Figures(SN, name, brand, price, count, age, classification);
             toys.add(toy);
         }
-        else if (type.startsWith("2") || type.startsWith("3")) {
+        else if (SN.startsWith("2") || SN.startsWith("3")) {
         	System.out.println("\nEnter Toy Material: ");
             String material = scanner.next();
             System.out.println("\nEnter Toy Size: ");
@@ -177,7 +175,7 @@ public class Model {
             Toy toy = new Animals(SN, name, brand, price, count, age, material, size);
             toys.add(toy);
         }
-        else if (type.startsWith("4") || type.startsWith("5") || type.startsWith("6")) {
+        else if (SN.startsWith("4") || SN.startsWith("5") || SN.startsWith("6")) {
         	System.out.println("\nEnter Puzzle Type: ");
             char puzzleType = scanner.next().charAt(0);
             Toy toy = new Puzzles(SN, name, brand, price, count, age, puzzleType);
@@ -203,7 +201,7 @@ public class Model {
     }
     
  // Helper method to check if Serial Number is unique in the toys ArrayList
-    private boolean isSerialNumberUnique(long newSN) {
+    private boolean isSerialNumberUnique(String newSN) {
         for (Toy existingToy : toys) {
             if (existingToy.getSN() == newSN) {
                 return false; // Serial Number already exists, not unique

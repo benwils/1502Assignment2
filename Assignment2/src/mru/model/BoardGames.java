@@ -6,7 +6,7 @@ public class BoardGames extends Toy {
 	private int maxPlayers;
 	private String designers;
 	
-	public BoardGames(long SN, String name, String brand, double price, int availableCount, int ageAppropriate, int minPlayers, int maxPlayers, String designers) {
+	public BoardGames(String SN, String name, String brand, double price, int availableCount, int ageAppropriate, int minPlayers, int maxPlayers, String designers) {
 		super(SN, name, brand, price, availableCount, ageAppropriate);
 		this.minPlayers = minPlayers;
 		this.maxPlayers = maxPlayers;
@@ -41,7 +41,7 @@ public class BoardGames extends Toy {
 		return super.toString() + " Players: " + minPlayers + "-" + maxPlayers + " Designers: " + designers;
 	}
 	
-	public String format() {
-		return super.format() + ";" + minPlayers + "-" + maxPlayers + ";" + designers;
+	public String formatForSave() {
+		return super.formatForSave() + ";" + minPlayers + "-" + maxPlayers + ";" + designers;
 	}
 }

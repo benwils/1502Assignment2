@@ -5,7 +5,7 @@ public class Animals extends Toy {
 	private String material;
 	private char size;
 	
-	public Animals(long SN, String name, String brand, double price, int availableCount, int ageAppropriate, String material, char size) {
+	public Animals(String SN, String name, String brand, double price, int availableCount, int ageAppropriate, String material, char size) {
 		super(SN, name, brand, price, availableCount, ageAppropriate);
 		this.material = material;
 		this.size = size;
@@ -40,7 +40,7 @@ public class Animals extends Toy {
 		
 	}
 	
-	public String format() {
-		return super.format() + ";" + material + ";" + size;
+	public String formatForSave() {
+		return super.formatForSave() + ";" + material + ";" + size;
 	}
 }
