@@ -15,7 +15,7 @@ import mru.view.AppMenu;
 public class Model {
     private static ArrayList<String> storeList;
     private ArrayList<Toy> toys = new ArrayList<Toy>();
-    private final String FILE_PATH = "src\\toys.txt";
+    private final String FILE_PATH = "Assignment2/res/toys.txt";
     private AppMenu appMenu;
 
     /**
