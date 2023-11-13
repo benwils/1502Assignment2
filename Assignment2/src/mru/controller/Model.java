@@ -1,6 +1,7 @@
 package mru.controller;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,29 +9,67 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
+import mru.model.*;
 import mru.view.AppMenu;
 
 public class Model {
     private static ArrayList<String> storeList;
+    private ArrayList<Toy> toys;
+    private final String FILE_PATH = "res/toys.txt";
     private AppMenu appMenu;
 
     /**
      * Default constructor initializes the wordList, appMenu, and launches the application
-     *
-     * @throws IOException
+     * @throws Exception 
      */
-    public Model() throws IOException {
+    public Model() throws Exception {
         Model.storeList = new ArrayList<>();
         this.appMenu = new AppMenu(this); // Instantiate AppMenu
         initializeStoreList();
         launchApplication();
     }
 
-    private void initializeStoreList() {
-        storeList.add("0Eren123456789");
-        storeList.add("3Mikasa987654321");
-        storeList.add("4Armin13579");
-        storeList.add("9Levi2468");
+    private void initializeStoreList() throws Exception {
+    	File db = new File(FILE_PATH);
+		String currentLine;
+		String[] splittedLine;
+		String[] splitPlayers;
+		
+		
+		/**
+		 * takes the text from the txt file into an arraylist
+		 */
+		if(db.exists()) {
+			Scanner fileReader = new Scanner(db);
+			
+			while (fileReader.hasNextLine()) {
+				
+				currentLine = fileReader.nextLine();
+				splittedLine = currentLine.split(";");
+				if (splittedLine[0].charAt(0) == 1 || splittedLine[0].charAt(0) == 0) {
+					//figures SN, name, brand, price, count, age, mat
+					Toy toy = new Figures(Integer.parseInt(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
+					toys.add(toy);
+				}
+				else if (splittedLine[0].charAt(0) == 2 || splittedLine[0].charAt(0) == 3) {
+					//Animals mat size
+					Toy toy = new Animals(Integer.parseInt(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6], splittedLine[7].charAt(0));
+					toys.add(toy);
+				}
+				else if (splittedLine[0].charAt(0) == 4 || splittedLine[0].charAt(0) == 5 || splittedLine[0].charAt(0) == 6) {
+					//puzzles type
+					Toy toy = new Puzzles(Integer.parseInt(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), splittedLine[6].charAt(0));
+					toys.add(toy);
+				}
+				else {
+					//Board games min, max, designers
+					splitPlayers = splittedLine[6].split("-");
+					Toy toy = new BoardGames(Integer.parseInt(splittedLine[0]), splittedLine[1], splittedLine[2], Double.parseDouble(splittedLine[3]), Integer.parseInt(splittedLine[4]), Integer.parseInt(splittedLine[5]), Integer.parseInt(splitPlayers[0]), Integer.parseInt(splitPlayers[1]), splittedLine[7]);
+					toys.add(toy);
+				}
+			}
+			fileReader.close();
+		}
     }
 
     private void launchApplication() throws IOException {

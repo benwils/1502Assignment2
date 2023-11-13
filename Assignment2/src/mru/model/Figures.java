@@ -1,19 +1,21 @@
 package mru.model;
 
-public abstract class Figures {
+public class Figures extends Toy {
 	
-	private String name;
+	private char classification; 
 	
-	
-
-	public String getName() {
-		return name;
+	public Figures(int SN, String name, String brand, double price, int availableCount, int ageAppropriate, char classification) {
+		super(SN, name, brand, price, availableCount, ageAppropriate);
+		this.classification = classification;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public char getClassification() {
+		return classification;
+	}
+
+	public void setClassification(char classification) {
+		this.classification = classification;
 	}
 	
 	
-
 }
