@@ -67,7 +67,10 @@ public abstract class Toy {
 	}
 	
 	public String toString() {
-		return "Serial Number: " + SN + " Name: " + name + " Brand: " + brand + " Price: " + price + " Available Count: " + availableCount + " Age Appropriate: " + ageAppropriate + "Min";
+		String formattedPrice = String.format("%.2f", price);
+		return "Serial Number: " + SN + " Name: " + name + " Brand: " + brand + " Price: " + formattedPrice + " Available Count: " + availableCount + " Age Appropriate: " + ageAppropriate + "Min";
 	}
-
+	public String formatForSave() {
+		return SN + ";" + name + ";" + brand + ";" + price + ";" + availableCount + ";" + ageAppropriate;
+	}
 }

@@ -40,4 +40,8 @@ public class BoardGames extends Toy {
 	public String toString() {
 		return super.toString() + " Players: " + minPlayers + "-" + maxPlayers + " Designers: " + designers;
 	}
+	
+	public String formatForSave() {
+		return super.formatForSave() + ";" + minPlayers + "-" + maxPlayers + ";" + designers;
+	}
 }
